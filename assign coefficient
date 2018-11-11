@@ -30,15 +30,16 @@ public void assign_coef(double coef, int exp){
                 }
 
             // if exp not found, create new node for new coeff because it was not found in search
-            }else{
+            }else if(coef!=0){
                 // if exponent passed is the largest, create new node at beginning
-                if(coef!=0 && exp>this.function.getExp()){
-                    this.function = new TermNode(coef, exp, this.function);
+                if(exp>this.function.getExp()){
+                        this.function = new TermNode(coef, exp, this.function);
+                        removeZeroTerms();
 
                 // if exp is not the largest,
                 // find the next node where passed exponent+1 < current node.exp
                 // then create new node if not zero, keeping terms in order
-                }else if(coef!=0){
+                }else{
                     index=this.function;
                     while (index.getNext()!=null && exp+1<index.getExp()) {
                         index=index.getNext();

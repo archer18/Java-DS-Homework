@@ -1,0 +1,34 @@
+public void assign_coef(double coef, int exp){
+
+        // if exponent is already equal to passed exponent, no search, only assign
+        if(this.function.getExp()==exp){
+                this.function.setCoeff(coef);
+
+        }else{
+            // find the passed exponent within node list because it was not the first term
+            TermNode index = TermNode.expSearch(this.function, exp);
+
+            // if found, assign new coeff
+            if(index!=null){
+                index.setCoeff(coef);
+
+            // if not, create new node for new coeff because it was not found in search
+            }else{
+                // if exponent passed is the largest, create new node at beginning
+                if(exp>this.function.getExp()){
+                    this.function = new TermNode(coef, exp, this.function);
+
+                // if not, find the next node where passed exponent+1 < current node.exp
+                // then create new node at the end, keeping terms in order
+                }else{
+                    index=this.function;
+                    while (index.getNext()!=null && exp+1<index.getExp()) {
+                        index=index.getNext();
+                    }
+                    index.addTermAfter(coef, exp);
+                }
+            }
+        }
+        // if multiple terms exist, eliminate all nodes with zero for a coefficient
+        removeZeroTerms();
+    }//end method

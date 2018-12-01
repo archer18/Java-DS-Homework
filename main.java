@@ -12,7 +12,7 @@ public class main {
 
         if( areParenthesesBalanced( expression.toCharArray() )) {
 
-        LinkedList<Numbr> objectExpression = stringExpressionToLinkedListExpression(expression);
+        LinkedList<AmorphousObject> objectExpression = stringExpressionToLinkedListExpression(expression);
         StringBuilder postFixedExpressionStringBuilder = infixToPostfixConversion( objectExpression );
         String postFixedExpressionString = postFixedExpressionStringBuilder.toString();
 
@@ -28,7 +28,7 @@ public class main {
         }
     }
 
-    public static LinkedList<Numbr> stringExpressionToLinkedListExpression(String expression){
+    public static LinkedList<AmorphousObject> stringExpressionToLinkedListExpression(String expression){
 
         // needs end parentheses to indicate last number
         expression="("+expression+")";
@@ -61,7 +61,7 @@ public class main {
         Integer tempInteger;
         String tempString;
         LinkedList<Integer> startStop = new LinkedList<>();
-        LinkedList<Numbr> listOfNumbers = new LinkedList<>();
+        LinkedList<AmorphousObject> listOfAmorphousObjects = new LinkedList<>();
         ListIterator<Integer> positionIterator = positions.listIterator(0);
 
         // run through positions list
@@ -90,14 +90,14 @@ public class main {
                             // temporarily store the double parsed from the temporary String
                             tempDbl = Double.parseDouble(tempString);
                             // add number to the end new list
-                            listOfNumbers.addLast(new Numbr(tempDbl));
+                            listOfAmorphousObjects.addLast(new AmorphousObject(tempDbl));
 
                             // else, the startStop list is contains more than 1 item, parse from range specified
                         } else {
                             // similar logic as previous segments
                             tempString = expression.substring(startStop.peekFirst(), startStop.peekLast() + 1);
                             tempDbl = Double.parseDouble(tempString);
-                            listOfNumbers.addLast(new Numbr(tempDbl));
+                            listOfAmorphousObjects.addLast(new AmorphousObject(tempDbl));
                         }
 
                     // else it is a integer
@@ -108,40 +108,40 @@ public class main {
                             // similar logic as previous segments
                             tempString = expression.substring(startStop.peekFirst(), startStop.peekFirst()+1);
                             tempInt = Integer.parseInt(tempString);
-                            listOfNumbers.addLast(new Numbr(tempInt));
+                            listOfAmorphousObjects.addLast(new AmorphousObject(tempInt));
 
                             // else, the startStop list is contains more than 1 item, parse from range specified
                         } else {
                             // similar logic as previous segments
                             tempString = expression.substring(startStop.peekFirst(), startStop.peekLast()+1);
                             tempInt = Integer.parseInt(tempString);
-                            listOfNumbers.addLast(new Numbr(tempInt));
+                            listOfAmorphousObjects.addLast(new AmorphousObject(tempInt));
                         }
                     }
                 }
 
                 // when the operator is encountered, add it after the numbers have been added to the new list
-                listOfNumbers.addLast(new Numbr(expression.charAt(tempInteger+1000)));
+                listOfAmorphousObjects.addLast(new AmorphousObject(expression.charAt(tempInteger+1000)));
 
                 // clear out the startStop list once a number has been added to the list
                 startStop.clear();
             }
         }
-        return listOfNumbers;
+        return listOfAmorphousObjects;
     }
 
-    public static StringBuilder infixToPostfixConversion(LinkedList<Numbr> listOfNumbers){
+    public static StringBuilder infixToPostfixConversion(LinkedList<AmorphousObject> listOfAmorphousObjects){
 
         Stack<Character> operators = new Stack<>();
         StringBuilder ans = new StringBuilder();
-        Numbr tempNumber;
-        Character temp;
+        AmorphousObject tempNumber;
+        Character tempCharacter;
 
         // create iterator to traverse linked list
-        ListIterator listIterator = listOfNumbers.listIterator(0);
+        ListIterator listIterator = listOfAmorphousObjects.listIterator(0);
         // convert to POSTFIX logic WITH LINKED LIST
         while(listIterator.hasNext()){
-            tempNumber = (Numbr) listIterator.next();
+            tempNumber = (AmorphousObject) listIterator.next();
 
             if(tempNumber!=null){
 
@@ -166,8 +166,8 @@ public class main {
                     //  If tempNumber has a ')' stored, pop and output from the stack until an '(' is encountered.
                 }else if (tempNumber.getOperator()==')') {
                     while (!operators.isEmpty() && operators.peek() != '(') {
-                        temp=operators.pop();
-                        ans.append(temp);
+                        tempCharacter=operators.pop();
+                        ans.append(tempCharacter);
                         ans.append(" ");
                     }
 
@@ -212,7 +212,7 @@ public class main {
         return operands.pop();
     }
 
-    public static StringBuilder listToString(LinkedList<Numbr> objectExpression){
+    public static StringBuilder listToString(LinkedList<AmorphousObject> objectExpression){
 
         StringBuilder ans = new StringBuilder();
 
@@ -222,10 +222,10 @@ public class main {
         }
 
         ListIterator printing = objectExpression.listIterator(0);
-        Numbr temporary;
+        AmorphousObject temporary;
 
         while(printing.hasNext()){
-            temporary = (Numbr) printing.next();
+            temporary = (AmorphousObject) printing.next();
             if(temporary.getOperatorBoolean()){
                 ans.append(temporary.getOperator());
                 ans.append(" ");
@@ -322,23 +322,23 @@ public class main {
 
 }
 
-class Numbr {
+class AmorphousObject {
     private boolean isDouble = false;
     private int intNumber = 0;
     private double doubleNumber = 0.0;
     private char operator;
     private boolean isOperator = false;
 
-    public Numbr(double x){
+    public AmorphousObject(double x){
         doubleNumber = x;
         isDouble = true;
     }
 
-    public Numbr(int x){
+    public AmorphousObject(int x){
         intNumber = x;
     }
 
-    public Numbr(char x){
+    public AmorphousObject(char x){
         operator = x;
         isOperator = true;
     }

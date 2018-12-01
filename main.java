@@ -3,8 +3,9 @@ import java.util.*;
 public class main {
     public static void main(String args[]){
 
-        // TEST CASE HERE
-        String expression = "  5*  (9 -12    )/ 2";
+    // ------- TEST CASE HERE -------
+        String expression = " 1+2*(  6/ 2.004    )-(2.9*(5 ^7  )/10000)";
+    // ------------------------------
 
 
         System.out.println("Original Expression: "+expression);
@@ -15,11 +16,11 @@ public class main {
         StringBuilder postFixedExpressionStringBuilder = infixToPostfixConversion( objectExpression );
         String postFixedExpressionString = postFixedExpressionStringBuilder.toString();
 
-        System.out.println("Infix Expression formatted: " + printList( objectExpression ));
+        System.out.println("\nInfix Expression Formatted: " + listToString( objectExpression ));
 
-        System.out.println("Postfix Expression: " + postFixedExpressionString );
+        System.out.println("\nPostfix Expression: " + postFixedExpressionString );
 
-        //System.out.println("Evaluation of Expression = " + evaluateExpression( objectExpression ));
+        System.out.println("\nEvaluation of Expression = " + evaluatePostFixString( postFixedExpressionString ));
 
         }else{
             // if parentheses are wrong, print the following error
@@ -29,7 +30,7 @@ public class main {
 
     public static LinkedList<Numbr> stringExpressionToLinkedListExpression(String expression){
 
-        // needs end parentheses to function
+        // needs end parentheses to indicate last number
         expression="("+expression+")";
 
         // run through given expression String and mark positions of numbers, operators
@@ -196,37 +197,22 @@ public class main {
         return ans;
     }
 
-    public static double evaluateExpression(LinkedList<Numbr> expression) {
-        Stack<Double>  values =new Stack<>();
+    public static double evaluatePostFixString(String expression){
+        Scanner in = new Scanner(expression);
+        Stack<Double> operands = new Stack<>();
 
-        Numbr tempNumbr;
-        ListIterator<Numbr> expressionList = expression.listIterator(0);
-        int counter = 0;
-        while (expressionList.hasNext()) {
-            System.out.println("loop "+counter);
+        while(in.hasNext()){
+            if(in.hasNextDouble())
+                operands.push(in.nextDouble());
 
-            tempNumbr = expressionList.next();
-            System.out.println("found next object @ "+tempNumbr);
-
-            if( !tempNumbr.getOperatorBoolean() ){
-                System.out.println("found number");
-                if( tempNumbr.getDoubleBoolean() ){
-                    values.push( tempNumbr.getDoubleNumber() );
-                    System.out.println("pushed double");
-                }else{
-                    values.push( (double) tempNumbr.getIntNumber() );
-                    System.out.println("pushed integer");
-                }
-            }else if(precedence(tempNumbr.getOperator())>0 || tempNumbr.getOperator()==')'){
-                System.out.println("before evaluation of operator");
-                values.push( operatorEvaluation( tempNumbr.getOperator(), values.pop(), values.pop() ));
+            else{
+                operands.push( operatorEvaluation(in.next(), operands.pop(), operands.pop() ));
             }
-            counter++;
         }
-        return values.pop();
+        return operands.pop();
     }
 
-    public static StringBuilder printList(LinkedList<Numbr> objectExpression){
+    public static StringBuilder listToString(LinkedList<Numbr> objectExpression){
 
         StringBuilder ans = new StringBuilder();
 
@@ -257,7 +243,6 @@ public class main {
     }
 
     private static int precedence(Character c){
-
         switch (c) {
             case '+':
             case '-':
@@ -272,19 +257,19 @@ public class main {
         }
     }
 
-    private static double operatorEvaluation(Character c, double a, double b){
+    private static double operatorEvaluation(String c, double b, double a){
         switch (c) {
-            case '+':
+            case "+":
                 return (a+b);
-            case '-':
+            case "-":
                 return (a-b);
-            case '*':
+            case "*":
                 return (a*b);
-            case '/':
+            case "/":
                 if (b == 0)
                     throw new UnsupportedOperationException("Cannot divide by zero");
                 return (a/b);
-            case '^':
+            case "^":
                 return (Math.pow(a,b));
             default:
                 return 0;
@@ -336,3 +321,37 @@ public class main {
     }
 
 }
+
+class Numbr {
+    private boolean isDouble = false;
+    private int intNumber = 0;
+    private double doubleNumber = 0.0;
+    private char operator;
+    private boolean isOperator = false;
+
+    public Numbr(double x){
+        doubleNumber = x;
+        isDouble = true;
+    }
+
+    public Numbr(int x){
+        intNumber = x;
+    }
+
+    public Numbr(char x){
+        operator = x;
+        isOperator = true;
+    }
+
+    public boolean getDoubleBoolean(){   return isDouble; }
+
+    public int getIntNumber(){   return intNumber; }
+
+    public double getDoubleNumber(){   return doubleNumber; }
+
+    public Character getOperator(){ return operator; }
+
+    public boolean getOperatorBoolean(){ return isOperator; }
+
+}
+

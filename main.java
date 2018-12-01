@@ -3,28 +3,29 @@ import java.util.*;
 public class main {
     public static void main(String args[]){
 
-    // ------- TEST CASE HERE -------
-        String expression = " 1+2*(  6/ 2.004    )-(2.9*(5 ^7  )/10000)";
-    // ------------------------------
+        String result;
+        String[] expressions = {
+                ")(4+2)*(2*6))",
+                "( 2 + ( 5 * 5 ))",
+                "( ( 2 + 5 ) * 5 )",
+                "((4-5)))",
+                "((( 3 +    5 )* 4 ) - 9 )",
+                "( ( ( 1 + 3 ) ^ 4 ) * ( 2 ^ 3 ) )",
+                "( ( ( 32 * 41 ) / 16 ) + ( 12 * 10 ) )",
+                " 1+2*(  6/ 2.004    )-(2.9*(5 ^7  )/10000)"
+        };
 
-
-        System.out.println("Original Expression: "+expression);
-
-        if( areParenthesesBalanced( expression.toCharArray() )) {
-
-        LinkedList<AmorphousObject> objectExpression = stringExpressionToLinkedListExpression(expression);
-        StringBuilder postFixedExpressionStringBuilder = infixToPostfixConversion( objectExpression );
-        String postFixedExpressionString = postFixedExpressionStringBuilder.toString();
-
-        System.out.println("\nInfix Expression Formatted: " + listToString( objectExpression ));
-
-        System.out.println("\nPostfix Expression: " + postFixedExpressionString );
-
-        System.out.println("\nEvaluation of Expression = " + evaluatePostFixString( postFixedExpressionString ));
-
-        }else{
-            // if parentheses are wrong, print the following error
-            System.out.println("Expression parentheses are not balanced");
+        for (int i = 0; i < expressions.length; i++){
+            if( areParenthesesBalanced( expressions[i].toCharArray() )) {
+                result = infixToPostfixConversion(stringExpressionToLinkedListExpression(expressions[i])).toString();
+                System.out.println(expressions[i] + " ==> " + result);
+                System.out.println("Evaluation of Expression = " + evaluatePostFixString(result));
+                System.out.println();
+            }else{
+                System.out.print(expressions[i]+" ==> ");
+                System.out.println("Expression parentheses are not balanced");
+                System.out.println("No Evaluation\n");
+            }
         }
     }
 

@@ -3,19 +3,23 @@ import java.util.*;
 public class main {
     public static void main(String args[]){
 
-        String expression = "5+9-12*2";
+        // TEST CASE HERE
+        String expression = "  5*  (9 -12    )/ 2";
+
+
         System.out.println("Original Expression: "+expression);
 
-        char[] charConvert = expression.toCharArray();
-        if(areParenthesesBalanced(charConvert)) {
+        if( areParenthesesBalanced( expression.toCharArray() )) {
 
         LinkedList<Numbr> objectExpression = stringExpressionToLinkedListExpression(expression);
         StringBuilder postFixedExpressionStringBuilder = infixToPostfixConversion( objectExpression );
         String postFixedExpressionString = postFixedExpressionStringBuilder.toString();
 
+        System.out.println("Infix Expression formatted: " + printList( objectExpression ));
+
         System.out.println("Postfix Expression: " + postFixedExpressionString );
 
-        System.out.println("Evaluation of Expression = " + evaluateExpression( objectExpression ));
+        //System.out.println("Evaluation of Expression = " + evaluateExpression( objectExpression ));
 
         }else{
             // if parentheses are wrong, print the following error
@@ -197,36 +201,59 @@ public class main {
 
         Numbr tempNumbr;
         ListIterator<Numbr> expressionList = expression.listIterator(0);
+        int counter = 0;
         while (expressionList.hasNext()) {
-            tempNumbr = expressionList.next();
+            System.out.println("loop "+counter);
 
-            if(!tempNumbr.getOperatorBoolean()){
-                if(tempNumbr.getDoubleBoolean()){
+            tempNumbr = expressionList.next();
+            System.out.println("found next object @ "+tempNumbr);
+
+            if( !tempNumbr.getOperatorBoolean() ){
+                System.out.println("found number");
+                if( tempNumbr.getDoubleBoolean() ){
                     values.push( tempNumbr.getDoubleNumber() );
+                    System.out.println("pushed double");
                 }else{
                     values.push( (double) tempNumbr.getIntNumber() );
+                    System.out.println("pushed integer");
                 }
-            }else{
-                values.push(operatorEvaluation(tempNumbr.getOperator(), values.pop(), values.pop()));
+            }else if(precedence(tempNumbr.getOperator())>0 || tempNumbr.getOperator()==')'){
+                System.out.println("before evaluation of operator");
+                values.push( operatorEvaluation( tempNumbr.getOperator(), values.pop(), values.pop() ));
             }
+            counter++;
         }
         return values.pop();
     }
 
-    public static void printList(LinkedList<Numbr> objectExpression){
+    public static StringBuilder printList(LinkedList<Numbr> objectExpression){
+
+        StringBuilder ans = new StringBuilder();
+
+        if(objectExpression.peekFirst().getOperator()=='(' && objectExpression.peekLast().getOperator()==')'){
+            objectExpression.pollFirst();
+            objectExpression.pollLast();
+        }
+
         ListIterator printing = objectExpression.listIterator(0);
         Numbr temporary;
+
         while(printing.hasNext()){
             temporary = (Numbr) printing.next();
             if(temporary.getOperatorBoolean()){
-                System.out.print(temporary.getOperator()+" ");
+                ans.append(temporary.getOperator());
+                ans.append(" ");
+
             }else if(temporary.getDoubleBoolean()){
-                System.out.print(temporary.getDoubleNumber()+" ");
+                ans.append(temporary.getDoubleNumber());
+                ans.append(" ");
+
             }else{
-                System.out.print(temporary.getIntNumber()+" ");
+                ans.append(temporary.getIntNumber());
+                ans.append(" ");
             }
         }
-        System.out.println("\n");
+        return ans;
     }
 
     private static int precedence(Character c){

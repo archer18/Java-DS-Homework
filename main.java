@@ -4,18 +4,18 @@ public class main {
     public static void main(String args[]){
 
         String expression = "5+9-12*2";
-
-        // Convert the string expression into usable operands and operators using linked list
-        LinkedList<Numbr> objectExpression = stringExpressionToLinkedListExpression(expression);
+        System.out.println("Original Expression: "+expression);
 
         char[] charConvert = expression.toCharArray();
-        // if parentheses are balanced, print converted expression
-
         if(areParenthesesBalanced(charConvert)) {
-            // print converted expression
-            System.out.println( infixToPostfixConversion( objectExpression ));
 
-            System.out.println( evaluateExpression( stringExpressionToLinkedListExpression(expression)));
+        LinkedList<Numbr> objectExpression = stringExpressionToLinkedListExpression(expression);
+        StringBuilder postFixedExpressionStringBuilder = infixToPostfixConversion( objectExpression );
+        String postFixedExpressionString = postFixedExpressionStringBuilder.toString();
+
+        System.out.println("Postfix Expression: " + postFixedExpressionString );
+
+        System.out.println("Evaluation of Expression = " + evaluateExpression( objectExpression ));
 
         }else{
             // if parentheses are wrong, print the following error
@@ -193,47 +193,23 @@ public class main {
     }
 
     public static double evaluateExpression(LinkedList<Numbr> expression) {
-        // Stack for numbers: 'values'
-        Stack<Double> values = new Stack<Double>();
-
-        // Stack for Operators: 'ops'
-        Stack<Character> operators = new Stack<Character>();
+        Stack<Double>  values =new Stack<>();
 
         Numbr tempNumbr;
         ListIterator<Numbr> expressionList = expression.listIterator(0);
         while (expressionList.hasNext()) {
             tempNumbr = expressionList.next();
 
-            // if the next item is a number
-            if (!tempNumbr.getOperatorBoolean()) {
-                // if number is simply a double, push it in the values stack
-                if (tempNumbr.getDoubleBoolean()) {
-                    values.push(tempNumbr.getDoubleNumber());
-
-                    // if the number is a integer, typecast to double and push into values stack
-                } else {
-                    values.push((double) tempNumbr.getIntNumber());
+            if(!tempNumbr.getOperatorBoolean()){
+                if(tempNumbr.getDoubleBoolean()){
+                    values.push( tempNumbr.getDoubleNumber() );
+                }else{
+                    values.push( (double) tempNumbr.getIntNumber() );
                 }
-            } else if (tempNumbr.getOperator() == '(') {
-                operators.push(tempNumbr.getOperator());
-
-            } else if (tempNumbr.getOperator() == ')') {
-                while (operators.peek() != '(') {
-                    values.push(operatorEvaluation(operators.pop(), values.pop(), values.pop()));
-                }
-                operators.pop();
-            } else if (precedence(tempNumbr.getOperator()) > 0) {
-                while (!operators.isEmpty() && precedence(tempNumbr.getOperator()) <= precedence(operators.peek())) {
-                    values.push(operatorEvaluation(operators.pop(), values.pop(), values.pop()));
-                }
-                operators.push(tempNumbr.getOperator());
+            }else{
+                values.push(operatorEvaluation(tempNumbr.getOperator(), values.pop(), values.pop()));
             }
-        }//end while loop
-
-        while (!operators.empty()){
-            values.push(operatorEvaluation(operators.pop(), values.pop(), values.pop()));
         }
-
         return values.pop();
     }
 
